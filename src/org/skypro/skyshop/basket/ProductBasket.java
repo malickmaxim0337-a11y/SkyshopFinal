@@ -1,34 +1,50 @@
 package org.skypro.skyshop.basket;
 
 import org.skypro.skyshop.product.Product;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class ProductBasket {
-    private final List<Product> products = new LinkedList<>();
-    public void addProduct(Product product) { products.add(product); }
+
+    private final Map<String, List<Product>> products = new HashMap<>();
+
+    public void addProduct(Product product) {
+
+        products.computeIfAbsent(product.getName(), k -> new LinkedList<>()).add(product);
+    }
+
     public int getTotalPrice() {
         int total = 0;
-        for (Product p : products) total += p.getPrice();
+
+        for (List<Product> productList : products.values()) {
+            for (Product product : productList) {
+                total += product.getPrice();
+            }
+        }
         return total;
     }
+
     public void printBasket() {
-        if (products.isEmpty()) { System.out.println("В корзине пусто"); return; }
-        int special = 0;
-        for (Product p : products) {
-            System.out.println(p);
-            if (p.isSpecial()) special++;
+        if (products.isEmpty()) {
+            System.out.println("В корзине пусто");
+            return;
+        }
+        int specialCount = 0;
+        for (List<Product> productList : products.values()) {
+            for (Product product : productList) {
+                System.out.println(product);
+                if (product.isSpecial()) {
+                    specialCount++;
+                }
+            }
         }
         System.out.println("Итого: " + getTotalPrice());
-        System.out.println("Специальных товаров: " + special);
+        System.out.println("Специальных товаров: " + specialCount);
     }
+
     public List<Product> removeProductByName(String name) {
-        List<Product> removed = new LinkedList<>();
-        Iterator<Product> it = products.iterator();
-        while (it.hasNext()) {
-            Product p = it.next();
-            if (p.getName().equals(name)) { removed.add(p); it.remove(); }
+        List<Product> removed = products.remove(name);
+        if (removed == null) {
+            return new LinkedList<>();
         }
         return removed;
     }

@@ -6,6 +6,7 @@ import org.skypro.skyshop.product.*;
 import org.skypro.skyshop.search.SearchEngine;
 import org.skypro.skyshop.search.Searchable;
 import java.util.List;
+import java.util.Map;
 
 public class App {
     public static void main(String[] args) {
@@ -21,5 +22,18 @@ public class App {
 
         System.out.println("\n--- Корзина после удаления ---");
         basket.printBasket();
+
+        System.out.println("\n=== Поисковый движок ===");
+        SearchEngine engine = new SearchEngine();
+        engine.add(new SimpleProduct("Яблоко", 50));
+        engine.add(new SimpleProduct("Арбуз", 100));
+        engine.add(new Article("Польза яблок", "Много витаминов."));
+
+        System.out.println("--- Результаты поиска по 'я' (отсортированы) ---");
+
+        Map<String, Searchable> results = engine.search("я");
+        for (Searchable s : results.values()) {
+            System.out.println(s.getStringRepresentation());
+        }
     }
 }
