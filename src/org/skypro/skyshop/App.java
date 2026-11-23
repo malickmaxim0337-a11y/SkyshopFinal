@@ -2,10 +2,12 @@ package org.skypro.skyshop;
 
 import org.skypro.skyshop.article.Article;
 import org.skypro.skyshop.basket.ProductBasket;
-import org.skypro.skyshop.product.*;
+import org.skypro.skyshop.product.SimpleProduct;
 import org.skypro.skyshop.search.SearchEngine;
 import org.skypro.skyshop.search.Searchable;
+
 import java.util.List;
+import java.util.Set;
 
 public class App {
     public static void main(String[] args) {
@@ -16,10 +18,26 @@ public class App {
         basket.addProduct(new SimpleProduct("Яблоко", 60));
 
         System.out.println("--- Удаляем 'Яблоко' ---");
-        List<Product> removed = basket.removeProductByName("Яблоко");
-        for (Product p : removed) System.out.println(p);
+        List<org.skypro.skyshop.product.Product> removed = basket.removeProductByName("Яблоко");
+        for (org.skypro.skyshop.product.Product p : removed) System.out.println(p);
 
         System.out.println("\n--- Корзина после удаления ---");
         basket.printBasket();
+
+        System.out.println("\n=== Поисковый движок ===");
+        SearchEngine engine = new SearchEngine();
+        engine.add(new SimpleProduct("Яблоко", 50));
+        engine.add(new SimpleProduct("Арбуз", 100));
+        engine.add(new SimpleProduct("Яблоко", 70)); // Попытка добавить дубликат - он не добавится!
+        engine.add(new Article("Польза яблок", "Много витаминов."));
+
+        System.out.println("--- Результаты поиска по 'я' (сначала длинные) ---");
+        // Теперь search возвращает Set, просто перебираем его
+        Set<Searchable> results = engine.search("я");
+        for (Searchable s : results) {
+            System.out.println(s.getStringRepresentation());
+        }
     }
 }
+
+
