@@ -1,15 +1,28 @@
 package org.skypro.skyshop.search;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class SearchEngine {
-    private final List<Searchable> searchables = new LinkedList<>();
-    public void add(Searchable item) { searchables.add(item); }
-    public List<Searchable> search(String query) {
-        List<Searchable> results = new LinkedList<>();
+
+    private final Set<Searchable> searchables = new HashSet<>();
+
+    public void add(Searchable item) {
+        searchables.add(item);
+    }
+
+    public Set<Searchable> search(String query) {
+        Set<Searchable> results = new TreeSet<>((o1, o2) -> {
+            int lengthCompare = Integer.compare(o2.getName().length(), o1.getName().length());
+            if (lengthCompare == 0) {
+                return o1.getName().compareTo(o2.getName());
+            }
+            return lengthCompare;
+        });
+
         for (Searchable item : searchables) {
-            if (item.getSearchTerm().toLowerCase().contains(query.toLowerCase())) results.add(item);
+            if (item.getSearchTerm().toLowerCase().contains(query.toLowerCase())) {
+                results.add(item);
+            }
         }
         return results;
     }
